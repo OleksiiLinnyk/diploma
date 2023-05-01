@@ -1,0 +1,24 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:password}
+    url: ${DB_HOST:jdbc:mysql://localhost:3306/diploma}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      hbm2ddl:
+        auto: ${DB_DDL_TYPE:validate}
+    properties:
+      hibernate:
+        format_sql: true
+        order_inserts: true
+        show_sql: true
+        jdbc:
+          batch_size: 10
+        temp:
+          use_jdbc_metadata_defaults: false
+
