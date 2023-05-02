@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS `diploma`.`role` ;
 
 CREATE TABLE IF NOT EXISTS `diploma`.`role` (
   `id` INT NOT NULL,
-  `name` VARCHAR(10) NOT NULL,
+  `name` VARCHAR(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
@@ -47,12 +47,12 @@ CREATE TABLE IF NOT EXISTS `diploma`.`user` (
   `email` VARCHAR(45) NOT NULL,
   `subject` VARCHAR(45) NULL,
   `role_id` INT NOT NULL,
-  `group_id` INT NOT NULL,
-  PRIMARY KEY (`id`, `role_id`, `group_id`),
+  `group_id` INT NULL,
+  PRIMARY KEY (`id`, `role_id`),
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
   INDEX `fk_user_role_idx` (`role_id` ASC) VISIBLE,
-  INDEX `fk_user_group1_idx` (`group_id` ASC) VISIBLE,
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_user_group1_idx` (`group_id` ASC) VISIBLE,
   CONSTRAINT `fk_user_role`
     FOREIGN KEY (`role_id`)
     REFERENCES `diploma`.`role` (`id`)
@@ -133,15 +133,14 @@ DROP TABLE IF EXISTS `diploma`.`user_has_exercise` ;
 CREATE TABLE IF NOT EXISTS `diploma`.`user_has_exercise` (
   `user_id` INT NOT NULL,
   `user_role_id` INT NOT NULL,
-  `user_group_id` INT NOT NULL,
   `exercise_id` INT NOT NULL,
   `exercise_test_id` INT NOT NULL,
-  PRIMARY KEY (`user_id`, `user_role_id`, `user_group_id`, `exercise_id`, `exercise_test_id`),
+  PRIMARY KEY (`user_id`, `user_role_id`, `exercise_id`, `exercise_test_id`),
   INDEX `fk_user_has_exercise_exercise1_idx` (`exercise_id` ASC, `exercise_test_id` ASC) VISIBLE,
-  INDEX `fk_user_has_exercise_user1_idx` (`user_id` ASC, `user_role_id` ASC, `user_group_id` ASC) VISIBLE,
+  INDEX `fk_user_has_exercise_user1_idx` (`user_id` ASC, `user_role_id` ASC) VISIBLE,
   CONSTRAINT `fk_user_has_exercise_user1`
-    FOREIGN KEY (`user_id` , `user_role_id` , `user_group_id`)
-    REFERENCES `diploma`.`user` (`id` , `role_id` , `group_id`)
+    FOREIGN KEY (`user_id` , `user_role_id`)
+    REFERENCES `diploma`.`user` (`id` , `role_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_user_has_exercise_exercise1`
