@@ -1,0 +1,1 @@
+ALTER TABLE `diploma`.`group` RENAME TO `diploma`.`student_group`;

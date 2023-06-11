@@ -1,20 +1,22 @@
-package ua.edu.khpi.project2023.security.services;
+package ua.edu.khpi.project2023.security.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ua.edu.khpi.project2023.models.User;
+import ua.edu.khpi.project2023.model.User;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 @Getter
+@ToString
 @AllArgsConstructor
-public class UserDetailsImpl implements UserDetails {
+public class AuthUser implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     private Long id;
@@ -25,11 +27,11 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public static UserDetailsImpl build(User user) {
+    public static AuthUser build(User user) {
         List<GrantedAuthority> authorities = Collections.singletonList(
                 new SimpleGrantedAuthority(user.getRole().getName().name()));
 
-        return new UserDetailsImpl(
+        return new AuthUser(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),

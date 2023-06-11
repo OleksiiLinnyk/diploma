@@ -1,4 +1,4 @@
-package ua.edu.khpi.project2023.models;
+package ua.edu.khpi.project2023.model;
 
 import lombok.Data;
 import lombok.NonNull;
@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @Entity
-@Table(name = "group")
+@Table(name = "student_group")
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +23,7 @@ public class Group {
     @NonNull
     @Size(max = 45)
     private String name;
+
+    public Group() {
+    }
 }
