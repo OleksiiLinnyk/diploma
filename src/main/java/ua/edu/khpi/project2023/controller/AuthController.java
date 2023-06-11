@@ -1,4 +1,4 @@
-package ua.edu.khpi.project2023.controllers;
+package ua.edu.khpi.project2023.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ua.edu.khpi.project2023.models.ERole;
-import ua.edu.khpi.project2023.models.Role;
-import ua.edu.khpi.project2023.models.User;
+import ua.edu.khpi.project2023.model.ERole;
+import ua.edu.khpi.project2023.model.Role;
+import ua.edu.khpi.project2023.model.User;
 import ua.edu.khpi.project2023.payload.request.LoginRequest;
 import ua.edu.khpi.project2023.payload.request.SignupRequest;
 import ua.edu.khpi.project2023.payload.response.MessageResponse;
@@ -25,7 +25,7 @@ import ua.edu.khpi.project2023.payload.response.UserInfoResponse;
 import ua.edu.khpi.project2023.repository.RoleRepository;
 import ua.edu.khpi.project2023.repository.UserRepository;
 import ua.edu.khpi.project2023.security.jwt.JwtUtils;
-import ua.edu.khpi.project2023.security.services.UserDetailsImpl;
+import ua.edu.khpi.project2023.security.model.AuthUser;
 
 import javax.validation.Valid;
 
@@ -49,7 +49,7 @@ public class AuthController {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        AuthUser userDetails = (AuthUser) authentication.getPrincipal();
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
         String role = userDetails.getAuthorities().stream()

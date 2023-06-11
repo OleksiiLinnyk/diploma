@@ -1,4 +1,4 @@
-package ua.edu.khpi.project2023.models;
+package ua.edu.khpi.project2023.model;
 
 public enum ERole {
     ROLE_STUDENT,

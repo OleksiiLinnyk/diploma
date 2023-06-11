@@ -15,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ua.edu.khpi.project2023.security.jwt.AuthEntryPointJwt;
 import ua.edu.khpi.project2023.security.jwt.AuthTokenFilter;
-import ua.edu.khpi.project2023.security.services.UserDetailsServiceImpl;
+import ua.edu.khpi.project2023.security.service.UserDetailsServiceImpl;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -56,6 +56,8 @@ public class WebSecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/authdebug/**").permitAll() //TODO remove permission later
+                .antMatchers("/v3/api-docs/**").permitAll()
+                .antMatchers("/swagger-ui/**").permitAll()
                 .anyRequest().authenticated();
 
         http.authenticationProvider(authenticationProvider());

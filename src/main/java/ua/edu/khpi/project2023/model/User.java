@@ -1,10 +1,6 @@
-package ua.edu.khpi.project2023.models;
+package ua.edu.khpi.project2023.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -20,9 +16,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
+@Builder
+@AllArgsConstructor
 @RequiredArgsConstructor
 @Entity
 @Table( name = "user",
@@ -58,4 +54,7 @@ public class User {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     private Group group;
+
+    public User() {
+    }
 }

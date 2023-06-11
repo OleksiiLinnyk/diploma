@@ -1,4 +1,4 @@
-package ua.edu.khpi.project2023.models;
+package ua.edu.khpi.project2023.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,4 +23,6 @@ public class Role {
     @Column(length = 20)
     private ERole name;
 
+    public Role() {
+    }
 }

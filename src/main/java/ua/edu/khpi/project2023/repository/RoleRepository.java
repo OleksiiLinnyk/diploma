@@ -2,8 +2,8 @@ package ua.edu.khpi.project2023.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ua.edu.khpi.project2023.models.ERole;
-import ua.edu.khpi.project2023.models.Role;
+import ua.edu.khpi.project2023.model.ERole;
+import ua.edu.khpi.project2023.model.Role;
 
 import java.util.Optional;
 
