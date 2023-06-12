@@ -4,6 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ua.edu.khpi.project2023.exception.BadRequestException;
+import ua.edu.khpi.project2023.exception.NotFoundException;
+import ua.edu.khpi.project2023.exception.UserAlreadyExistException;
 import ua.edu.khpi.project2023.model.ERole;
 import ua.edu.khpi.project2023.model.Group;
 import ua.edu.khpi.project2023.model.Role;
@@ -23,16 +26,16 @@ import java.util.UUID;
 public class UserService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    RoleRepository roleRepository;
+    private RoleService roleService;
 
     @Autowired
-    GroupService groupService;
+    private GroupService groupService;
 
     public List<User> getAllUsers() {
         log.debug("Get all users");
@@ -46,18 +49,18 @@ public class UserService {
     }
 
     public User addUser(UserRegisterRequest userRegisterRequest) {
-        log.info("Register user for user - {}", userRegisterRequest);
+        log.debug("Register user for user - {}", userRegisterRequest);
         if (!userRepository.existsByEmail(userRegisterRequest.getEmail())) {
             String password = UUID.randomUUID().toString();
-            Optional<Role> role = roleRepository.findByName(userRegisterRequest.getRole());
+            Role role = roleService.getRoleByName(userRegisterRequest.getRole());
             Optional<Group> group = userRegisterRequest.getGroupName() != null
                     ? groupService.getGroupByName(userRegisterRequest.getGroupName())
                     : Optional.empty();
             if (userRegisterRequest.getRole().equals(ERole.ROLE_STUDENT) && !group.isPresent()) {
-                throw new RuntimeException("User cannot be without group");
+                throw new BadRequestException("User cannot be without group");
             }
             User user = User.builder()
-                    .role(role.orElseThrow(() -> new RuntimeException("Role does not exist")))
+                    .role(role)
                     .name(userRegisterRequest.getName())
                     .email(userRegisterRequest.getEmail())
                     .password(passwordEncoder.encode(password))
@@ -69,7 +72,6 @@ public class UserService {
             user.setPassword(password);
             return user;
         }
-        // TODO add custom exception
-        throw new RuntimeException("User already registered");
+        throw new UserAlreadyExistException();
     }
 }
