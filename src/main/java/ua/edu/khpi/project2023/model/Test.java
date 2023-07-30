@@ -1,15 +1,16 @@
 package ua.edu.khpi.project2023.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @Data
+@AllArgsConstructor
+@Entity
 @Table(name = "test")
 public class Test {
 
@@ -24,4 +25,7 @@ public class Test {
     @NotBlank
     @NonNull
     private String theme;
+
+    public Test() {
+    }
 }

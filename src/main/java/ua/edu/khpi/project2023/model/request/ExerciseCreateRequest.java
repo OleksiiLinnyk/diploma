@@ -11,4 +11,5 @@ public class ExerciseCreateRequest {
 
     private String answer;
     private Long testId;
+    private ExerciseTypedRequest exerciseTypedRequest;
 }

@@ -17,6 +17,7 @@ import ua.edu.khpi.project2023.repository.UserRepository;
 import ua.edu.khpi.project2023.security.model.AuthUser;
 import ua.edu.khpi.project2023.security.util.SecurityUtil;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,6 +49,7 @@ public class UserService {
         return userRepository.findAllStudentsInGroup(groupName);
     }
 
+    @Transactional
     public User addUser(UserRegisterRequest userRegisterRequest) {
         log.debug("Register user for user - {}", userRegisterRequest);
         if (!userRepository.existsByEmail(userRegisterRequest.getEmail())) {
