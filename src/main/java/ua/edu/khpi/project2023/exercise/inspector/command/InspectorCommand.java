@@ -1,8 +1,8 @@
 package ua.edu.khpi.project2023.exercise.inspector.command;
 
-import ua.edu.khpi.project2023.exercise.model.Exercise;
+import ua.edu.khpi.project2023.exercise.model.IExercise;
 
 public interface InspectorCommand {
 
-    int inspectExercise(Exercise exercise, String rightAnswer);
+    int inspectExercise(IExercise IExercise, String rightAnswer);
 }

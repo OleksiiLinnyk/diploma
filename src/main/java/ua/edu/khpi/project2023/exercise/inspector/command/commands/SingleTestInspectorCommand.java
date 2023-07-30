@@ -2,17 +2,17 @@ package ua.edu.khpi.project2023.exercise.inspector.command.commands;
 
 import org.apache.commons.lang3.StringUtils;
 import ua.edu.khpi.project2023.exercise.inspector.command.InspectorCommand;
-import ua.edu.khpi.project2023.exercise.model.Exercise;
+import ua.edu.khpi.project2023.exercise.model.IExercise;
 import ua.edu.khpi.project2023.exercise.model.TestExercise;
 
 public class SingleTestInspectorCommand implements InspectorCommand {
 
     @Override
-    public int inspectExercise(Exercise exercise, String rightAnswer) {
-        if (!(exercise instanceof TestExercise) || !StringUtils.isNumeric(rightAnswer)) {
+    public int inspectExercise(IExercise IExercise, String rightAnswer) {
+        if (!(IExercise instanceof TestExercise) || !StringUtils.isNumeric(rightAnswer)) {
             throw new IllegalArgumentException();
         }
-        TestExercise testExercise = (TestExercise) exercise;
+        TestExercise testExercise = (TestExercise) IExercise;
         int rightAnswerIndex = Integer.parseInt(rightAnswer);
 
         if (testExercise.getGivenAnswerIndexes().size() == 1

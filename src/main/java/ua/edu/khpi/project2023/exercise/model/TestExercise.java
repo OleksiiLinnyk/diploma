@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class TestExercise implements Exercise {
+public class TestExercise implements IExercise {
 
     private ExerciseType type;
 

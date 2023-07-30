@@ -4,11 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import ua.edu.khpi.project2023.exercise.ExerciseType;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
-public class OpenExercise implements Exercise {
+public class OpenExercise implements IExercise {
 
     private ExerciseType type;
 
