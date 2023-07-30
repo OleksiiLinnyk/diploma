@@ -132,20 +132,18 @@ DROP TABLE IF EXISTS `diploma`.`user_has_exercise` ;
 
 CREATE TABLE IF NOT EXISTS `diploma`.`user_has_exercise` (
   `user_id` INT NOT NULL,
-  `user_role_id` INT NOT NULL,
   `exercise_id` INT NOT NULL,
-  `exercise_test_id` INT NOT NULL,
-  PRIMARY KEY (`user_id`, `user_role_id`, `exercise_id`, `exercise_test_id`),
-  INDEX `fk_user_has_exercise_exercise1_idx` (`exercise_id` ASC, `exercise_test_id` ASC) VISIBLE,
-  INDEX `fk_user_has_exercise_user1_idx` (`user_id` ASC, `user_role_id` ASC) VISIBLE,
+  PRIMARY KEY (`user_id`, `exercise_id`),
+  INDEX `fk_user_has_exercise_exercise1_idx` (`exercise_id` ASC) VISIBLE,
+  INDEX `fk_user_has_exercise_user1_idx` (`user_id` ASC) VISIBLE,
   CONSTRAINT `fk_user_has_exercise_user1`
-    FOREIGN KEY (`user_id` , `user_role_id`)
-    REFERENCES `diploma`.`user` (`id` , `role_id`)
+    FOREIGN KEY (`user_id`)
+    REFERENCES `diploma`.`user` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_user_has_exercise_exercise1`
-    FOREIGN KEY (`exercise_id` , `exercise_test_id`)
-    REFERENCES `diploma`.`exercise` (`id` , `test_id`)
+    FOREIGN KEY (`exercise_id`)
+    REFERENCES `diploma`.`exercise` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
