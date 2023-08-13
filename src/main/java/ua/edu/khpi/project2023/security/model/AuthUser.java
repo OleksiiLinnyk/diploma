@@ -25,6 +25,7 @@ public class AuthUser implements UserDetails {
     private String subject;
     @JsonIgnore
     private String password;
+    private Long groupId;
     private Collection<? extends GrantedAuthority> authorities;
 
     public static AuthUser build(User user) {
@@ -37,6 +38,7 @@ public class AuthUser implements UserDetails {
                 user.getEmail(),
                 user.getSubject(),
                 user.getPassword(),
+                user.getGroup().getId(),
                 authorities);
     }
 

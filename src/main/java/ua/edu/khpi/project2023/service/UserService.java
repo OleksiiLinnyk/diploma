@@ -2,15 +2,15 @@ package ua.edu.khpi.project2023.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ua.edu.khpi.project2023.exception.BadRequestException;
-import ua.edu.khpi.project2023.exception.NotFoundException;
-import ua.edu.khpi.project2023.exception.UserAlreadyExistException;
+import ua.edu.khpi.project2023.exception.*;
 import ua.edu.khpi.project2023.model.ERole;
 import ua.edu.khpi.project2023.model.Group;
 import ua.edu.khpi.project2023.model.Role;
 import ua.edu.khpi.project2023.model.User;
+import ua.edu.khpi.project2023.model.request.UpdateUserRequest;
 import ua.edu.khpi.project2023.payload.request.UserRegisterRequest;
 import ua.edu.khpi.project2023.repository.RoleRepository;
 import ua.edu.khpi.project2023.repository.UserRepository;
@@ -46,7 +46,18 @@ public class UserService {
 
     public List<User> getAllStudentsInGroup(String groupName) {
         log.debug("Get all students in group {}", groupName);
+        if (groupName == null) {
+            return userRepository.findUsersWithoutGroup();
+        }
         return userRepository.findAllStudentsInGroup(groupName);
+    }
+
+    public List<User> getAllStudentsInGroupByGroupId(Long groupId) {
+        log.debug("Get all students in group {}", groupId);
+        if (groupId != null) {
+            return userRepository.findAllStudentsByGroupId(groupId);
+        }
+        throw new BadRequestException("Group id cannot be null");
     }
 
     @Transactional
@@ -75,5 +86,21 @@ public class UserService {
             return user;
         }
         throw new UserAlreadyExistException();
+    }
+
+    @Transactional
+    public User updateUser(UpdateUserRequest updateUserRequest) {
+        AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!userRepository.existsByEmail(updateUserRequest.getEmail())) {
+            User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new NotFoundException("User not found"));
+            if (!updateUserRequest.getPassword().equals(updateUserRequest.getConfirmPassword())) {
+                throw new PasswordNotTheSameException();
+            }
+            userRepository.updateUser(updateUserRequest.getEmail(), updateUserRequest.getName(), passwordEncoder.encode(updateUserRequest.getPassword()), user.getId());
+            User updatedUser = userRepository.findById(user.getId()).orElseThrow(() -> new NotFoundException("User not found"));
+            updatedUser.setEmail(updateUserRequest.getEmail());
+            return updatedUser;
+        }
+        throw new EmailAlreadyExistException();
     }
 }

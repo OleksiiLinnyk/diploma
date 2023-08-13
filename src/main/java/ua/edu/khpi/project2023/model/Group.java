@@ -26,4 +26,8 @@ public class Group {
 
     public Group() {
     }
+
+    public Group(@NonNull String name) {
+        this.name = name;
+    }
 }

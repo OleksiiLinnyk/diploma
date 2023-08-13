@@ -1,6 +1,7 @@
 package ua.edu.khpi.project2023.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -25,4 +26,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
             nativeQuery = true)
     List<User> findAllStudentsInGroup(@Param("groupName") String groupName);
 
+    List<User> findAllStudentsByGroupId(Long groupId);
+
+    @Modifying
+    @Query(value = "UPDATE user SET name = :name, email = :email, password = :password WHERE id = :userId", nativeQuery = true)
+    void updateUser(@Param("email") String email, @Param("name") String name, @Param("password") String password, @Param("userId") Long id);
+
+    @Query(value = "SELECT * FROM user WHERE group_id IS NULL", nativeQuery = true)
+    List<User> findUsersWithoutGroup();
+    @Modifying
+    @Query(value = "INSERT INTO user_has_exercise (user_id, exercise_id) VALUES(:userId, :exerciseId)", nativeQuery = true)
+    void assignUserToExercises(@Param("userId") Long userId, @Param("exerciseId") Long exerciseId);
 }

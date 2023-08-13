@@ -3,14 +3,14 @@ package ua.edu.khpi.project2023.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ua.edu.khpi.project2023.exception.NotFoundException;
 import ua.edu.khpi.project2023.model.Group;
+import ua.edu.khpi.project2023.model.request.UpdateGroupRequest;
 import ua.edu.khpi.project2023.service.GroupService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -32,5 +32,25 @@ public class GroupController {
         Group group = groupService.getGroupByName(groupName)
                 .orElseThrow(() -> new NotFoundException(String.format("Group not found %s", groupName)));
         return ResponseEntity.ok(group);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<Void> createGroup(@RequestParam String groupName) {
+        groupService.createGroup(groupName);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<Group> updateGroup(@Valid @RequestBody UpdateGroupRequest request) {
+        return ResponseEntity.ok(groupService.updateGroup(request));
+    }
+
+    @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<Void> deleteGroup(@RequestParam @NotNull Long groupId) {
+        groupService.deleteGroup(groupId);
+        return ResponseEntity.ok().build();
     }
 }

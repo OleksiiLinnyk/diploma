@@ -3,9 +3,14 @@ package ua.edu.khpi.project2023.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ua.edu.khpi.project2023.exception.BadRequestException;
+import ua.edu.khpi.project2023.exception.GroupNameAlreadyExistException;
+import ua.edu.khpi.project2023.exception.NotFoundException;
 import ua.edu.khpi.project2023.model.Group;
+import ua.edu.khpi.project2023.model.request.UpdateGroupRequest;
 import ua.edu.khpi.project2023.repository.GroupRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,5 +29,35 @@ public class GroupService {
     public List<Group> getAllGroups() {
         log.debug("Find all groups");
         return groupRepository.findAll();
+    }
+
+    @Transactional
+    public void createGroup(String groupName) {
+        Optional<Group> group = getGroupByName(groupName);
+        if (!group.isPresent()) {
+            groupRepository.save(new Group(groupName));
+        } else {
+            throw new GroupNameAlreadyExistException();
+        }
+    }
+
+    @Transactional
+    public Group updateGroup(UpdateGroupRequest request) {
+        Optional<Group> group = getGroupByName(request.getNewGroupName());
+        if (!group.isPresent()) {
+            groupRepository.updateGroup(request.getNewGroupName(), request.getGroupId());
+            return groupRepository.findById(request.getGroupId()).orElseThrow(() -> new NotFoundException("Group not found"));
+        } else {
+            throw new GroupNameAlreadyExistException();
+        }
+    }
+
+    @Transactional
+    public void deleteGroup(Long groupId) {
+        groupRepository.findById(groupId)
+                .ifPresentOrElse(value -> groupRepository.deleteById(groupId),
+                        () -> {
+                            throw new NotFoundException(String.format("Group with id %d not found", groupId));
+                        });
     }
 }

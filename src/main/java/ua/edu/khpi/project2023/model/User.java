@@ -57,4 +57,12 @@ public class User {
 
     public User() {
     }
+
+    public User(Long id, @NonNull String name, @NonNull String email, @NonNull String password, String subject) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.subject = subject;
+    }
 }

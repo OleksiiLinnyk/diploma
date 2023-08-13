@@ -1,0 +1,1 @@
+ALTER TABLE `diploma`.`test` ADD COLUMN `enabled` TINYINT(1) DEFAULT '1';

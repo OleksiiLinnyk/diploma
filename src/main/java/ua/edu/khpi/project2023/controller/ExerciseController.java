@@ -8,6 +8,8 @@ import ua.edu.khpi.project2023.model.request.ExerciseCreateRequest;
 import ua.edu.khpi.project2023.model.response.ExerciseResponse;
 import ua.edu.khpi.project2023.service.ExerciseService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/exercise")
 public class ExerciseController {
@@ -17,7 +19,7 @@ public class ExerciseController {
 
     @PostMapping
     @PreAuthorize("hasRole('TEACHER') or hasRole('ADMIN')")
-    ResponseEntity<Void> assignExercise(@RequestBody ExerciseCreateRequest request) {
+    ResponseEntity<Void> createExercise(@RequestBody ExerciseCreateRequest request) {
         exerciseService.saveExercise(request);
         return ResponseEntity.ok().build();
     }
@@ -28,4 +30,16 @@ public class ExerciseController {
         return ResponseEntity.ok(exerciseService.getExerciseById(exerciseId));
     }
 
+    @DeleteMapping
+    @PreAuthorize("hasRole('TEACHER') or hasRole('ADMIN')")
+    ResponseEntity<Void> removeExercise(@RequestParam(name = "exerciseId") Long exerciseId) {
+        exerciseService.removeExercise(exerciseId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/all/test/{testId}")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('TEACHER') or hasRole('ADMIN')")
+    ResponseEntity<List<ExerciseResponse>> getAllByTestId(@PathVariable(name = "testId") Long testId) {
+        return ResponseEntity.ok(exerciseService.getAllByTestId(testId));
+    }
 }
