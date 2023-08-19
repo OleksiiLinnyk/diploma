@@ -102,13 +102,18 @@ public class ExerciseService {
     }
 
     public void passExercise(PassExerciseRequest request) {
-        Exercise exercise = exerciseRepository.findById(request.getExerciseId()).orElseThrow(() -> new NotFoundException(String.format("Exercise with id %d has not been found", request.getExerciseId())));
+        Exercise exercise = exerciseRepository.findById(request.getExerciseId())
+                .orElseThrow(() -> new NotFoundException(String.format("Exercise with id %d has not been found", request.getExerciseId())));
         IExercise iExercise = ExerciseJsonUtil.jsonToExercise(exercise.getQuestion());
+        ExerciseJsonUtil.writeGivenAnswerToExercise(iExercise, request.getAnswer());
+        String rightAnswer = exercise.getAnswer();
         try {
-            int point = ExerciseInspector.inspectExercise(iExercise, request.getAnswer());
-            exerciseRepository.passExercise(true, request.getAnswer(), point);
+            int point = ExerciseInspector.inspectExercise(iExercise, rightAnswer);
+            exerciseRepository.passExercise(true, request.getAnswer(), point,
+                    SecurityUtil.getAuthUser().getId(), exercise.getId());
         } catch (UnsupportedExerciseInspection e) {
-            exerciseRepository.passExercise(false, request.getAnswer(), null);
+            exerciseRepository.passExercise(false, request.getAnswer(), null,
+                    SecurityUtil.getAuthUser().getId(), exercise.getId());
         }
     }
 

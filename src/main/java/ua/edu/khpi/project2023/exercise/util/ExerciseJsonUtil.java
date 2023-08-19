@@ -7,6 +7,10 @@ import ua.edu.khpi.project2023.exercise.model.IExercise;
 import ua.edu.khpi.project2023.exercise.model.OpenExercise;
 import ua.edu.khpi.project2023.exercise.model.TestExercise;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class ExerciseJsonUtil {
 
     private static Gson gson = new Gson();
@@ -26,6 +30,21 @@ public class ExerciseJsonUtil {
             throw new IllegalArgumentException();
         }
         return exercise;
+    }
+
+    public static void writeGivenAnswerToExercise(IExercise exercise, String answer) {
+        ExerciseType type = exercise.getType();
+        if (type.equals(ExerciseType.SINGLE_ANSWER_EXERCISE) || type.equals(ExerciseType.MULTIPLE_ANSWER_EXERCISE)) {
+            List<Integer> answerIndexes = Arrays
+                    .stream(answer.split(","))
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toList());
+            ((TestExercise) exercise).setGivenAnswerIndexes(answerIndexes);
+        } else if (type.equals(ExerciseType.SHORT_OPEN_ANSWER_EXERCISE) || type.equals(ExerciseType.LONG_OPEN_ANSWER_EXERCISE)) {
+            ((OpenExercise) exercise).setGivenAnswer(answer);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     private static ExerciseType resolveType(String json) {

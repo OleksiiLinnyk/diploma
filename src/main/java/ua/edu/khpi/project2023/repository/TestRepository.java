@@ -18,7 +18,7 @@ public interface TestRepository extends JpaRepository<Test, Long> {
     @Query(value = "UPDATE test SET enable = :enable WHERE id = :testId", nativeQuery = true)
     void enableTest(@Param("enable") boolean isEnabled, @Param("testId") Long testId);
 
-    @Query(value = "SELECT * FROM test WHERE userId = :userId", nativeQuery = true)
+    @Query(value = "SELECT * FROM test WHERE user_id = :userId", nativeQuery = true)
     List<Test> getMyTests(@Param("userId") Long userId);
 
     @Query(value = "SELECT * FROM test as t JOIN group_has_test as g ON t.id = g.test_id WHERE g.group_id = :groupId", nativeQuery = true)

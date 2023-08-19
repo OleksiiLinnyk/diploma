@@ -34,6 +34,10 @@ public class UserService {
     @Autowired
     private GroupService groupService;
 
+    public User getUserById(Long id) {
+        return userRepository.getReferenceById(id);
+    }
+
     public List<User> getAllUsers() {
         log.debug("Get all users");
         AuthUser authUser = SecurityUtil.getAuthUser();
@@ -62,7 +66,7 @@ public class UserService {
             Role role = roleService.getRoleByName(userRegisterRequest.getRole());
             Optional<Group> group = userRegisterRequest.getGroupName() != null
                     ? groupService.getGroupByName(userRegisterRequest.getGroupName())
-                    : Optional.empty();
+                    : groupService.getGroupByName("staff");
             if (userRegisterRequest.getRole().equals(ERole.ROLE_STUDENT) && !group.isPresent()) {
                 throw new BadRequestException("User cannot be without group");
             }

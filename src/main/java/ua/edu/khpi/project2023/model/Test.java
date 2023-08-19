@@ -27,12 +27,10 @@ public class Test {
     private String theme;
 
     @NotNull
-    @NotBlank
     private boolean enabled;
 
     @NotNull
-    @NotBlank
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User teacher;
 
