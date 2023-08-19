@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ua.edu.khpi.project2023.model.User;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     Boolean existsByEmail(String email);
+
+    @Query(value = "SELECT EXISTS(SELECT email FROM user WHERE id != :userId AND email = :email)", nativeQuery = true)
+    Integer existsByEmailAndId(@Param("email") String email, @Param("userId") Long id);
 
     @Query(value = "SELECT * FROM user WHERE email != :email",
             nativeQuery = true)
@@ -30,6 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Modifying
     @Query(value = "UPDATE user SET name = :name, email = :email, password = :password WHERE id = :userId", nativeQuery = true)
+    @Transactional
     void updateUser(@Param("email") String email, @Param("name") String name, @Param("password") String password, @Param("userId") Long id);
 
     @Query(value = "SELECT * FROM user WHERE group_id IS NULL", nativeQuery = true)

@@ -5,13 +5,12 @@ import ua.edu.khpi.project2023.exercise.inspector.command.InspectorCommand;
 import ua.edu.khpi.project2023.exercise.inspector.command.InspectorCommandContainer;
 import ua.edu.khpi.project2023.exercise.model.IExercise;
 
-public class ExerciseInspector {
+public final class ExerciseInspector {
 
-    private InspectorCommandContainer commandContainer = new InspectorCommandContainer();
+    private static InspectorCommandContainer commandContainer = new InspectorCommandContainer();
 
-    public int inspectExercise(IExercise IExercise, String rightAnswer) throws UnsupportedExerciseInspection {
+    public static int inspectExercise(IExercise IExercise, String rightAnswer) throws UnsupportedExerciseInspection {
         InspectorCommand command = commandContainer.getCommand(IExercise.getType());
         return command.inspectExercise(IExercise, rightAnswer);
     }
-
 }

@@ -6,7 +6,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.edu.khpi.project2023.model.User;
 import ua.edu.khpi.project2023.model.request.UpdateUserRequest;
-import ua.edu.khpi.project2023.payload.request.UserRegisterRequest;
 import ua.edu.khpi.project2023.service.UserService;
 
 import javax.validation.Valid;

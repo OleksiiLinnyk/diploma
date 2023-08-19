@@ -5,7 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.edu.khpi.project2023.model.request.ExerciseCreateRequest;
+import ua.edu.khpi.project2023.model.request.PassExerciseRequest;
 import ua.edu.khpi.project2023.model.response.ExerciseResponse;
+import ua.edu.khpi.project2023.model.response.UserPassedExerciseResponse;
 import ua.edu.khpi.project2023.service.ExerciseService;
 
 import java.util.List;
@@ -41,5 +43,18 @@ public class ExerciseController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('TEACHER') or hasRole('ADMIN')")
     ResponseEntity<List<ExerciseResponse>> getAllByTestId(@PathVariable(name = "testId") Long testId) {
         return ResponseEntity.ok(exerciseService.getAllByTestId(testId));
+    }
+
+    @PostMapping("/pass/exercise")
+    @PreAuthorize("hasRole('STUDENT')")
+    ResponseEntity<Void> passExercise(@RequestBody PassExerciseRequest request) {
+        exerciseService.passExercise(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/unchecked/exercise")
+    @PreAuthorize("hasRole('TEACHER')")
+    ResponseEntity<List<UserPassedExerciseResponse>> getUncheckedExercise() {
+        return ResponseEntity.ok(exerciseService.getUncheckedExercises());
     }
 }

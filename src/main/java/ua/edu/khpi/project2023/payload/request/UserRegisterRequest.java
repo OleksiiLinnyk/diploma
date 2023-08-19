@@ -22,4 +22,6 @@ public class UserRegisterRequest {
     @Nullable
     private String subject;
     private ERole role;
+    @NotBlank
+    private String password;
 }

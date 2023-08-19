@@ -3,24 +3,29 @@ package ua.edu.khpi.project2023.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ua.edu.khpi.project2023.exception.BadRequestException;
 import ua.edu.khpi.project2023.exception.NotFoundException;
+import ua.edu.khpi.project2023.exception.UnsupportedExerciseInspection;
 import ua.edu.khpi.project2023.exercise.ExerciseType;
+import ua.edu.khpi.project2023.exercise.inspector.ExerciseInspector;
+import ua.edu.khpi.project2023.exercise.model.IExercise;
 import ua.edu.khpi.project2023.exercise.model.OpenExercise;
 import ua.edu.khpi.project2023.exercise.model.TestExercise;
 import ua.edu.khpi.project2023.exercise.util.ExerciseJsonUtil;
 import ua.edu.khpi.project2023.model.ERole;
 import ua.edu.khpi.project2023.model.Exercise;
+import ua.edu.khpi.project2023.model.PassedExercise;
 import ua.edu.khpi.project2023.model.Test;
 import ua.edu.khpi.project2023.model.request.ExerciseCreateRequest;
+import ua.edu.khpi.project2023.model.request.PassExerciseRequest;
 import ua.edu.khpi.project2023.model.response.ExerciseResponse;
+import ua.edu.khpi.project2023.model.response.UserPassedExerciseResponse;
 import ua.edu.khpi.project2023.repository.ExerciseRepository;
 import ua.edu.khpi.project2023.security.model.AuthUser;
+import ua.edu.khpi.project2023.security.util.SecurityUtil;
 
 import javax.transaction.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,7 +67,7 @@ public class ExerciseService {
     public ExerciseResponse getExerciseById(Long id) {
         return exerciseRepository.findById(id)
                 .map(exercise -> {
-                    AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                    AuthUser authUser = SecurityUtil.getAuthUser();
                     String role = authUser.getAuthorities().stream()
                             .map(GrantedAuthority::getAuthority)
                             .findFirst().orElse(ERole.ROLE_STUDENT.name());
@@ -81,7 +86,7 @@ public class ExerciseService {
     public List<ExerciseResponse> getAllByTestId(Long testId) {
         return exerciseRepository.findAllByTestId(testId).stream()
                 .map(exercise -> {
-                    AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                    AuthUser authUser = SecurityUtil.getAuthUser();
                     String role = authUser.getAuthorities().stream()
                             .map(GrantedAuthority::getAuthority)
                             .findFirst().orElse(ERole.ROLE_STUDENT.name());
@@ -93,6 +98,27 @@ public class ExerciseService {
                         builder.answer(exercise.getAnswer());
                     }
                     return builder.build();
+                }).collect(Collectors.toList());
+    }
+
+    public void passExercise(PassExerciseRequest request) {
+        Exercise exercise = exerciseRepository.findById(request.getExerciseId()).orElseThrow(() -> new NotFoundException(String.format("Exercise with id %d has not been found", request.getExerciseId())));
+        IExercise iExercise = ExerciseJsonUtil.jsonToExercise(exercise.getQuestion());
+        try {
+            int point = ExerciseInspector.inspectExercise(iExercise, request.getAnswer());
+            exerciseRepository.passExercise(true, request.getAnswer(), point);
+        } catch (UnsupportedExerciseInspection e) {
+            exerciseRepository.passExercise(false, request.getAnswer(), null);
+        }
+    }
+
+    public List<UserPassedExerciseResponse> getUncheckedExercises() {
+        AuthUser authUser = SecurityUtil.getAuthUser();
+        List<PassedExercise> uncheckedExercises = exerciseRepository.getUnCheckedExercisesByUserId(authUser.getId());
+        return uncheckedExercises.stream()
+                .map(exercise -> {
+                    return new UserPassedExerciseResponse(exercise.getId(), exercise.getTest().getId(), exercise.getAnswer(),
+                            jsonToExercise(exercise.getQuestion()), exercise.getUserId(), exercise.getGivenAnswer());
                 }).collect(Collectors.toList());
     }
 
