@@ -12,6 +12,7 @@ import ua.edu.khpi.project2023.service.ExerciseService;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600, allowCredentials = "true")
 @RestController
 @RequestMapping("/api/exercise")
 public class ExerciseController {
