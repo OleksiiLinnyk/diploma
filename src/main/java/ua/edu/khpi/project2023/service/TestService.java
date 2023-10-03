@@ -48,7 +48,6 @@ public class TestService {
 
     @Transactional
     public Test enableTest(boolean isEnabled, Long testId) {
-        Test test = getTestById(testId);
         testRepository.enableTest(isEnabled, testId);
         return getTestById(testId);
     }

@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
@@ -17,12 +19,17 @@ public class Exercise {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "test_id", referencedColumnName = "id")
     private Test test;
 
+    @NotBlank
+    @NotNull
     private String question;
 
+    @NotBlank
+    @NotNull
     private String answer;
 
     public Exercise() {

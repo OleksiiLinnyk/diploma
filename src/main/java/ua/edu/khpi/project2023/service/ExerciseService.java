@@ -61,7 +61,8 @@ public class ExerciseService {
             builder.question(ExerciseJsonUtil.exerciseToJson(openExercise));
         }
         builder.test(test);
-        exerciseRepository.save(builder.build());
+        Exercise ex = builder.build();
+        exerciseRepository.create(ex.getTest().getId(), ex.getQuestion(), ex.getAnswer());
     }
 
     public ExerciseResponse getExerciseById(Long id) {

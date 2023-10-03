@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "SELECT * FROM user u \n" +
             "JOIN role r ON r.id = u.role_id \n" +
-            "JOIN student_group g ON g.id = u.group_id WHERE r.name = 'ROLE_STUDENT' AND g.name = :groupName ORDER BY u.name",
+            "JOIN student_group g ON g.id = u.group_id WHERE g.name = :groupName ORDER BY u.name",
             nativeQuery = true)
     List<User> findAllStudentsInGroup(@Param("groupName") String groupName);
 

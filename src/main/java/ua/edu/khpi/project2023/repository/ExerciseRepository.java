@@ -12,7 +12,12 @@ import java.util.List;
 
 public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
 
-    List<Exercise> findAllByTestId(Long testId);
+    @Modifying
+    @Query(value = "insert into exercise (test_id, question, answer) values (:test_id, :question, :answer);", nativeQuery = true)
+    void create(@Param("test_id") Long testId, @Param("question") String question, @Param("answer") String answer);
+
+    @Query(value = "SELECT * FROM exercise WHERE test_id = :testId", nativeQuery = true)
+    List<Exercise> findAllByTestId(@Param("testId") Long testId);
 
     @Modifying
     @Transactional

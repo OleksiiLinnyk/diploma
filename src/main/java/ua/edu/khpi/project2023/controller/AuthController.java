@@ -32,6 +32,22 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    @GetMapping("/myInfo")
+    public ResponseEntity<?> getMyInfo() {
+        Object authUserObj = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!(authUserObj instanceof AuthUser)) {
+            return new ResponseEntity<>(null, null, 401); // not authenticated
+        }
+        AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String role = authUser.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst().orElse("student");
+        return ResponseEntity.ok().body(new UserInfoResponse(authUser.getId(),
+                authUser.getName(),
+                authUser.getEmail(),
+                role));
+    }
+
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager

@@ -26,6 +26,11 @@ public class GroupService {
         return groupRepository.findByName(name);
     }
 
+    public List<Group> getGroupByTestId(Long testId) {
+        log.debug("Find group by test id {}", testId);
+        return groupRepository.findByTestId(testId);
+    }
+
     public List<Group> getAllGroups() {
         log.debug("Find all groups");
         return groupRepository.findAll();
