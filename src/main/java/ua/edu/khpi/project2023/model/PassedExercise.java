@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-@Entity
+//@Entity
 public class PassedExercise extends Exercise {
 
     @Column(name = "user_id")
