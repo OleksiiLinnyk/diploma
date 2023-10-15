@@ -58,7 +58,7 @@ public class TestController {
 
     @PutMapping("/enable/{testId}/{enabled}")
     @PreAuthorize("hasRole('TEACHER')")
-    ResponseEntity<Test> updateTest(@PathVariable("testId") Long testId, @PathVariable("enabled") boolean enabled) {
+    ResponseEntity<Test> enableTest(@PathVariable("testId") Long testId, @PathVariable("enabled") boolean enabled) {
         return ResponseEntity.ok(testService.enableTest(enabled, testId));
     }
 

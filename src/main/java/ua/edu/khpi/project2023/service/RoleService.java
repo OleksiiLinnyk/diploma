@@ -25,7 +25,7 @@ public class RoleService {
 
     //Roles for admin except ADMIN role
     public List<Role> getAllRoles() {
-        log.debug("Start getting all roles");
+        log.info("Start getting all roles");
         return roleRepository.getAllRoles();
     }
 }

@@ -13,12 +13,8 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class UpdateUserRequest {
 
-    @NotNull
     private String name;
-    @NotNull
     private String email;
-    @NotNull
     private String password;
-    @NotNull
     private String confirmPassword;
 }

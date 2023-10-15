@@ -36,9 +36,24 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "UPDATE user SET name = :name, email = :email, password = :password WHERE id = :userId", nativeQuery = true)
     @Transactional
     void updateUser(@Param("email") String email, @Param("name") String name, @Param("password") String password, @Param("userId") Long id);
+    @Modifying
+    @Query(value = "UPDATE user SET password = :password WHERE id = :userId", nativeQuery = true)
+    @Transactional
+    void updateUserPassword(@Param("password") String password, @Param("userId") Long id);
+
+    @Modifying
+    @Query(value = "UPDATE user SET email = :email WHERE id = :userId", nativeQuery = true)
+    @Transactional
+    void updateUserEmail(@Param("email") String email, @Param("userId") Long id);
+
+    @Modifying
+    @Query(value = "UPDATE user SET name = :name WHERE id = :userId", nativeQuery = true)
+    @Transactional
+    void updateUsername(@Param("name") String name, @Param("userId") Long id);
 
     @Query(value = "SELECT * FROM user WHERE group_id IS NULL", nativeQuery = true)
     List<User> findUsersWithoutGroup();
+
     @Modifying
     @Query(value = "INSERT INTO user_has_exercise (user_id, exercise_id) VALUES(:userId, :exerciseId)", nativeQuery = true)
     void assignUserToExercises(@Param("userId") Long userId, @Param("exerciseId") Long exerciseId);

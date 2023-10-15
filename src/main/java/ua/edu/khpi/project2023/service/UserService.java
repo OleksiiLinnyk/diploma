@@ -1,6 +1,7 @@
 package ua.edu.khpi.project2023.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import ua.edu.khpi.project2023.repository.UserRepository;
 import ua.edu.khpi.project2023.security.model.AuthUser;
 import ua.edu.khpi.project2023.security.util.SecurityUtil;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,17 +85,28 @@ public class UserService {
         throw new UserAlreadyExistException();
     }
 
+    @Transactional
     public User updateUser(UpdateUserRequest updateUserRequest) {
         AuthUser authUser = SecurityUtil.getAuthUser();
-        if (userRepository.existsByEmailAndId(updateUserRequest.getEmail(), authUser.getId()) == 0) {
-            User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new NotFoundException("User not found"));
-            if (!updateUserRequest.getPassword().equals(updateUserRequest.getConfirmPassword())) {
+        User user = userRepository.findById(authUser.getId()).orElseThrow(() -> new NotFoundException("User not found"));
+        if (StringUtils.isNotBlank(updateUserRequest.getEmail())) {
+            if (userRepository.existsByEmailAndId(updateUserRequest.getEmail(), authUser.getId()) == 0) {
+                userRepository.updateUserEmail(updateUserRequest.getEmail(), user.getId());
+            } else {
+                throw new EmailAlreadyExistException();
+            }
+        }
+        if (StringUtils.isNotBlank(updateUserRequest.getPassword())) {
+            if (updateUserRequest.getPassword().equals(updateUserRequest.getConfirmPassword())) {
+                String updatedPassword = passwordEncoder.encode(updateUserRequest.getPassword());
+                userRepository.updateUserPassword(updatedPassword, user.getId());
+            }else {
                 throw new PasswordNotTheSameException();
             }
-            String updatedPassword = passwordEncoder.encode(updateUserRequest.getPassword());
-            userRepository.updateUser(updateUserRequest.getEmail(), updateUserRequest.getName(), updatedPassword, user.getId());
-            return userRepository.findById(user.getId()).orElseThrow(() -> new NotFoundException("User not found"));
         }
-        throw new EmailAlreadyExistException();
+        if (StringUtils.isNotBlank(updateUserRequest.getName())) {
+            userRepository.updateUsername(updateUserRequest.getName(), user.getId());
+        }
+        return userRepository.findById(user.getId()).orElseThrow(() -> new NotFoundException("User not found"));
     }
 }
