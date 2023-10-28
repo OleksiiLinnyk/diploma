@@ -2,6 +2,7 @@ package ua.edu.khpi.project2023.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.edu.khpi.project2023.model.Test;
@@ -52,8 +53,8 @@ public class TestController {
 
     @GetMapping("/my/test")
     @PreAuthorize("hasRole('STUDENT')")
-    ResponseEntity<List<Test>> getMyStudentTest() {
-        return ResponseEntity.ok(testService.getMyStudentTest());
+    ResponseEntity<List<Test>> getMyStudentTest(@RequestParam(value = "status", required = false) String status) {
+        return ResponseEntity.ok(testService.getMyStudentTest(status));
     }
 
     @PutMapping("/enable/{testId}/{enabled}")

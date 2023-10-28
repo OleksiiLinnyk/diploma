@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ua.edu.khpi.project2023.exception.NotFoundException;
 import ua.edu.khpi.project2023.model.Exercise;
+import ua.edu.khpi.project2023.model.PassedExerciseDTO;
 import ua.edu.khpi.project2023.model.Test;
 import ua.edu.khpi.project2023.model.User;
 import ua.edu.khpi.project2023.model.request.TestUpsertRequest;
@@ -15,6 +16,8 @@ import ua.edu.khpi.project2023.security.model.AuthUser;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TestService {
@@ -78,8 +81,49 @@ public class TestService {
         AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return testRepository.getMyTests(authUser.getId());
     }
-    public List<Test> getMyStudentTest() {
+    public List<Test> getMyStudentTest(String status) {
         AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return testRepository.getMyStudentTests(authUser.getGroupId());
+        List<Test> tests =  testRepository.getMyStudentTests(authUser.getGroupId());
+        if (Objects.nonNull(status)) {
+            tests = filterTestsByStatus(tests, authUser.getId(), status);
+        }
+        return tests;
+    }
+
+    private List<Test> filterTestsByStatus(List<Test> tests, Long userId, String status) {
+        return tests.stream().filter(t -> filterPredicate(t.getId(), userId, status)).collect(Collectors.toList());
+    }
+
+    private boolean filterPredicate(Long testId, Long userId, String status) {
+        List<PassedExerciseDTO> testExercises = exerciseRepository.findAllByStudentAndTestId(userId, testId);
+        if (status.equals("todo")) {
+            for (PassedExerciseDTO e : testExercises) {
+                if (e.getGivenAnswer() == null) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        if (status.equals("review")) {
+            boolean result = false;
+            for (PassedExerciseDTO e : testExercises) {
+                if (e.getGivenAnswer() == null) {
+                    return false;
+                }
+                if (e.getChecked() == null || !e.getChecked()) {
+                    result = true;
+                }
+            }
+            return result;
+        }
+        if (status.equals("done")) {
+            for (PassedExerciseDTO e : testExercises) {
+                if (e.getChecked() == null || !e.getChecked()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return true;
     }
 }

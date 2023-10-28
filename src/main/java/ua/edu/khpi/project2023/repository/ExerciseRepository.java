@@ -6,11 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ua.edu.khpi.project2023.model.Exercise;
-import ua.edu.khpi.project2023.model.PassedExercise;
+import ua.edu.khpi.project2023.model.PassedExerciseDTO;
+import ua.edu.khpi.project2023.repository.ExerciseRepositoryNativeQuery.NativeQueryExerciseRepository;
 
 import java.util.List;
 
-public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
+public interface ExerciseRepository extends JpaRepository<Exercise, Long>, NativeQueryExerciseRepository {
 
     @Modifying
     @Query(value = "insert into exercise (test_id, question, answer) values (:test_id, :question, :answer);", nativeQuery = true)
@@ -30,5 +31,5 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
             "JOIN exercise e ON t.id = e.test_id " +
             "JOIN user_has_exercise uhe ON e.id = uhe.exercise_id WHERE t.user_id = :userId AND uhe.checked = false",
             nativeQuery = true)
-    List<PassedExercise> getUnCheckedExercisesByUserId(@Param("userId") Long userId);
+    List<PassedExerciseDTO> getUnCheckedExercisesByUserId(@Param("userId") Long userId);
 }

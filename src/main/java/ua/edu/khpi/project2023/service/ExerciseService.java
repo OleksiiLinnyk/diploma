@@ -15,7 +15,7 @@ import ua.edu.khpi.project2023.exercise.model.TestExercise;
 import ua.edu.khpi.project2023.exercise.util.ExerciseJsonUtil;
 import ua.edu.khpi.project2023.model.ERole;
 import ua.edu.khpi.project2023.model.Exercise;
-import ua.edu.khpi.project2023.model.PassedExercise;
+import ua.edu.khpi.project2023.model.PassedExerciseDTO;
 import ua.edu.khpi.project2023.model.Test;
 import ua.edu.khpi.project2023.model.request.ExerciseCreateRequest;
 import ua.edu.khpi.project2023.model.request.PassExerciseRequest;
@@ -120,10 +120,10 @@ public class ExerciseService {
 
     public List<UserPassedExerciseResponse> getUncheckedExercises() {
         AuthUser authUser = SecurityUtil.getAuthUser();
-        List<PassedExercise> uncheckedExercises = exerciseRepository.getUnCheckedExercisesByUserId(authUser.getId());
+        List<PassedExerciseDTO> uncheckedExercises = exerciseRepository.getUnCheckedExercisesByUserId(authUser.getId());
         return uncheckedExercises.stream()
                 .map(exercise -> {
-                    return new UserPassedExerciseResponse(exercise.getId(), exercise.getTest().getId(), exercise.getAnswer(),
+                    return new UserPassedExerciseResponse(exercise.getId(), exercise.getTestId(), exercise.getAnswer(),
                             jsonToExercise(exercise.getQuestion()), exercise.getUserId(), exercise.getGivenAnswer());
                 }).collect(Collectors.toList());
     }
