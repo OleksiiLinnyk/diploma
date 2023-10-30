@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ua.edu.khpi.project2023.model.PassedExerciseDTO;
 import ua.edu.khpi.project2023.model.request.ExerciseCreateRequest;
 import ua.edu.khpi.project2023.model.request.PassExerciseRequest;
 import ua.edu.khpi.project2023.model.response.ExerciseResponse;
+import ua.edu.khpi.project2023.model.response.PassExerciseResponse;
 import ua.edu.khpi.project2023.model.response.UserPassedExerciseResponse;
 import ua.edu.khpi.project2023.service.ExerciseService;
 
@@ -44,6 +46,12 @@ public class ExerciseController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('TEACHER') or hasRole('ADMIN')")
     ResponseEntity<List<ExerciseResponse>> getAllByTestId(@PathVariable(name = "testId") Long testId) {
         return ResponseEntity.ok(exerciseService.getAllByTestId(testId));
+    }
+
+    @GetMapping("/all/pass/{testId}")
+    @PreAuthorize("hasRole('STUDENT')")
+    ResponseEntity<List<PassExerciseResponse>> getStudentExercisesByTestId(@PathVariable(name = "testId") Long testId) {
+        return ResponseEntity.ok(exerciseService.getStudentsExercisesByTestId(testId));
     }
 
     @PostMapping("/pass/exercise")

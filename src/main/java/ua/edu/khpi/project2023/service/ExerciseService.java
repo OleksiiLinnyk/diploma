@@ -20,6 +20,7 @@ import ua.edu.khpi.project2023.model.Test;
 import ua.edu.khpi.project2023.model.request.ExerciseCreateRequest;
 import ua.edu.khpi.project2023.model.request.PassExerciseRequest;
 import ua.edu.khpi.project2023.model.response.ExerciseResponse;
+import ua.edu.khpi.project2023.model.response.PassExerciseResponse;
 import ua.edu.khpi.project2023.model.response.UserPassedExerciseResponse;
 import ua.edu.khpi.project2023.repository.ExerciseRepository;
 import ua.edu.khpi.project2023.security.model.AuthUser;
@@ -116,6 +117,20 @@ public class ExerciseService {
             exerciseRepository.passExercise(false, request.getAnswer(), null,
                     SecurityUtil.getAuthUser().getId(), exercise.getId());
         }
+    }
+
+    public List<PassExerciseResponse> getStudentsExercisesByTestId(Long testId) {
+        long studentId = SecurityUtil.getAuthUser().getId();
+        List<PassedExerciseDTO> exerciseDTOS = exerciseRepository.findAllByStudentAndTestId(studentId, testId);
+        return exerciseDTOS.stream().map(dto -> PassExerciseResponse.builder()
+                .id(dto.getExercise_id())
+                .testId(dto.getTestId())
+                .exercise(jsonToExercise(dto.getQuestion()))
+                .checked(dto.getChecked())
+                .givenAnswer(dto.getGivenAnswer())
+                .takenPoints(dto.getTakenPoints())
+                .build()
+        ).collect(Collectors.toList());
     }
 
     public List<UserPassedExerciseResponse> getUncheckedExercises() {
