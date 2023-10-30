@@ -54,6 +54,14 @@ public class ExerciseController {
         return ResponseEntity.ok(exerciseService.getStudentsExercisesByTestId(testId));
     }
 
+    @GetMapping("/all/review")
+    @PreAuthorize("hasRole('TEACHER')")
+    ResponseEntity<List<PassExerciseResponse>> getExercisesByStudentAndTestId(@RequestParam(name = "testId") Long testId,
+                                                                           @RequestParam(name = "userId") Long userId) {
+
+        return ResponseEntity.ok(exerciseService.getExercisesByUserAndTestId(userId, testId));
+    }
+
     @PostMapping("/pass/exercise")
     @PreAuthorize("hasRole('STUDENT')")
     ResponseEntity<Void> passExercise(@RequestBody PassExerciseRequest request) {

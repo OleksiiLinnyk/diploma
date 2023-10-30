@@ -5,10 +5,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ua.edu.khpi.project2023.model.Test;
+import ua.edu.khpi.project2023.repository.TestRepositoryNativeQuery.NativeQueryTestRepository;
 
 import java.util.List;
 
-public interface TestRepository extends JpaRepository<Test, Long> {
+public interface TestRepository extends JpaRepository<Test, Long>, NativeQueryTestRepository {
 
     @Modifying
     @Query(value = "UPDATE test SET subject = :subject, theme = :theme WHERE id = :testId", nativeQuery = true)

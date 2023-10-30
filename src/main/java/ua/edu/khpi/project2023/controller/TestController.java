@@ -7,6 +7,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.edu.khpi.project2023.model.Test;
 import ua.edu.khpi.project2023.model.request.TestUpsertRequest;
+import ua.edu.khpi.project2023.model.response.GroupsProgressResponse;
+import ua.edu.khpi.project2023.model.response.UserProgressResponse;
 import ua.edu.khpi.project2023.service.TestService;
 
 import javax.validation.Valid;
@@ -55,6 +57,20 @@ public class TestController {
     @PreAuthorize("hasRole('STUDENT')")
     ResponseEntity<List<Test>> getMyStudentTest(@RequestParam(value = "status", required = false) String status) {
         return ResponseEntity.ok(testService.getMyStudentTest(status));
+    }
+
+    @GetMapping("/progress/{testId}")
+    @PreAuthorize("hasRole('TEACHER')")
+    ResponseEntity<List<GroupsProgressResponse>> getGroupResultsByTestId(@PathVariable("testId") Long testId) {
+        return ResponseEntity.ok(testService.getGroupsProgressByTestId(testId));
+    }
+
+    @GetMapping("/userProgress")
+    @PreAuthorize("hasRole('TEACHER')")
+    ResponseEntity<List<UserProgressResponse>> getUserResultsByTestAndGroupId(@RequestParam(value = "groupId") Long groupId,
+                                                                      @RequestParam(value = "testId") Long testId) {
+
+        return ResponseEntity.ok(testService.getUserProgressResponseByTestAndGroupId(testId, groupId));
     }
 
     @PutMapping("/enable/{testId}/{enabled}")

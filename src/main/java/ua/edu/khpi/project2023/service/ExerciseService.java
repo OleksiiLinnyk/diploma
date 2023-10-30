@@ -119,9 +119,8 @@ public class ExerciseService {
         }
     }
 
-    public List<PassExerciseResponse> getStudentsExercisesByTestId(Long testId) {
-        long studentId = SecurityUtil.getAuthUser().getId();
-        List<PassedExerciseDTO> exerciseDTOS = exerciseRepository.findAllByStudentAndTestId(studentId, testId);
+    public List<PassExerciseResponse> getExercisesByUserAndTestId(Long userId, Long testId) {
+        List<PassedExerciseDTO> exerciseDTOS = exerciseRepository.findAllByStudentAndTestId(userId, testId);
         return exerciseDTOS.stream().map(dto -> PassExerciseResponse.builder()
                 .id(dto.getExercise_id())
                 .testId(dto.getTestId())
@@ -131,6 +130,11 @@ public class ExerciseService {
                 .takenPoints(dto.getTakenPoints())
                 .build()
         ).collect(Collectors.toList());
+    }
+
+    public List<PassExerciseResponse> getStudentsExercisesByTestId(Long testId) {
+        long studentId = SecurityUtil.getAuthUser().getId();
+        return getExercisesByUserAndTestId(studentId, testId);
     }
 
     public List<UserPassedExerciseResponse> getUncheckedExercises() {
