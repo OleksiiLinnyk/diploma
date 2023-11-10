@@ -25,7 +25,11 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long>, Nativ
     void passExercise(@Param("checked") boolean isPassedSuccessfully, @Param("answer") String answer, @Param("points")
                         Integer points, @Param("userId") Long userId, @Param("exerciseId") Long exerciseId);
 
-    // TODO: This shit doesn't work
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE user_has_exercise SET checked = true, taken_points = :points WHERE user_id = :userId AND exercise_id = :exerciseId", nativeQuery = true)
+    void estimateExercise(@Param("points") Integer points, @Param("userId") Long userId, @Param("exerciseId") Long exerciseId);
+
     @Modifying
     @Query(value = "SELECT t.user_id, t.id, e.*, uhe.given_answer FROM test t " +
             "JOIN exercise e ON t.id = e.test_id " +

@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.edu.khpi.project2023.model.PassedExerciseDTO;
+import ua.edu.khpi.project2023.model.request.EstimateExerciseRequest;
 import ua.edu.khpi.project2023.model.request.ExerciseCreateRequest;
 import ua.edu.khpi.project2023.model.request.PassExerciseRequest;
 import ua.edu.khpi.project2023.model.response.ExerciseResponse;
@@ -66,6 +67,13 @@ public class ExerciseController {
     @PreAuthorize("hasRole('STUDENT')")
     ResponseEntity<Void> passExercise(@RequestBody PassExerciseRequest request) {
         exerciseService.passExercise(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/estimate/exercise")
+    @PreAuthorize("hasRole('TEACHER')")
+    ResponseEntity<Void> estimateExercise(@RequestBody EstimateExerciseRequest request) {
+        exerciseService.estimateExercise(request.getExerciseId(), request.getUserId(), request.getPoints());
         return ResponseEntity.ok().build();
     }
 

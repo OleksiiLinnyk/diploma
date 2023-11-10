@@ -119,6 +119,10 @@ public class ExerciseService {
         }
     }
 
+    public void estimateExercise(Long exerciseId, Long userId, Integer points) {
+        exerciseRepository.estimateExercise(points, userId, exerciseId);
+    }
+
     public List<PassExerciseResponse> getExercisesByUserAndTestId(Long userId, Long testId) {
         List<PassedExerciseDTO> exerciseDTOS = exerciseRepository.findAllByStudentAndTestId(userId, testId);
         return exerciseDTOS.stream().map(dto -> PassExerciseResponse.builder()
