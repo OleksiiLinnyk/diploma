@@ -33,6 +33,12 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getGroupByTestId(testId));
     }
 
+    @GetMapping("/available/test")
+    @PreAuthorize("hasRole('TEACHER') or hasRole('ADMIN')")
+    ResponseEntity<List<Group>> getAvailableGroupsByTestId(@RequestParam Long testId) {
+        return ResponseEntity.ok(groupService.getAvailableGroups(testId));
+    }
+
     @GetMapping("/name")
     @PreAuthorize("hasRole('TEACHER') or hasRole('ADMIN')")
     ResponseEntity<Group> getGroupByName(@RequestParam String groupName) {

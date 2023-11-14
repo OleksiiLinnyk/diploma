@@ -31,6 +31,16 @@ public class GroupService {
         return groupRepository.findByTestId(testId);
     }
 
+    @Transactional
+    public List<Group> getAvailableGroups(Long testId) {
+        log.debug("Find group by test id {}", testId);
+        List<Group> assignedGroups = groupRepository.findByTestId(testId);
+        List<Group> allGroups = groupRepository.findAll();
+        allGroups.removeAll(assignedGroups);
+        allGroups.removeIf(it -> it.getName().equals("staff"));
+        return allGroups;
+    }
+
     public List<Group> getAllGroups() {
         log.debug("Find all groups");
         return groupRepository.findAll();

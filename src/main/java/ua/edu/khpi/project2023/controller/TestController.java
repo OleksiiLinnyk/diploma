@@ -53,6 +53,12 @@ public class TestController {
         return ResponseEntity.ok(testService.getMyTests());
     }
 
+    @GetMapping("/{testId}")
+    @PreAuthorize("hasRole('TEACHER')")
+    ResponseEntity<Test> getTestById(@PathVariable("testId") Long id) {
+        return ResponseEntity.ok(testService.getTestById(id));
+    }
+
     @GetMapping("/my/test")
     @PreAuthorize("hasRole('STUDENT')")
     ResponseEntity<List<Test>> getMyStudentTest(@RequestParam(value = "status", required = false) String status) {

@@ -20,7 +20,7 @@ public class Exercise {
     private Long id;
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "test_id", referencedColumnName = "id")
     private Test test;
 

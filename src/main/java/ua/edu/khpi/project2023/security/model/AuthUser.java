@@ -58,6 +58,14 @@ public class AuthUser implements UserDetails {
         return email;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

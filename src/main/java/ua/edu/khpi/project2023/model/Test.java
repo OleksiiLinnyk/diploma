@@ -7,6 +7,7 @@ import lombok.NonNull;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -30,9 +31,12 @@ public class Test {
     private boolean enabled;
 
     @NotNull
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User teacher;
+
+    @OneToMany(mappedBy = "test")
+    private Set<Exercise> exercise;
 
     public Test() {
     }
