@@ -13,10 +13,7 @@ import ua.edu.khpi.project2023.exercise.model.IExercise;
 import ua.edu.khpi.project2023.exercise.model.OpenExercise;
 import ua.edu.khpi.project2023.exercise.model.TestExercise;
 import ua.edu.khpi.project2023.exercise.util.ExerciseJsonUtil;
-import ua.edu.khpi.project2023.model.ERole;
-import ua.edu.khpi.project2023.model.Exercise;
-import ua.edu.khpi.project2023.model.PassedExerciseDTO;
-import ua.edu.khpi.project2023.model.Test;
+import ua.edu.khpi.project2023.model.*;
 import ua.edu.khpi.project2023.model.request.ExerciseCreateRequest;
 import ua.edu.khpi.project2023.model.request.PassExerciseRequest;
 import ua.edu.khpi.project2023.model.response.ExerciseResponse;
@@ -40,12 +37,15 @@ public class ExerciseService {
     ExerciseRepository exerciseRepository;
     @Autowired
     TestService testService;
+    @Autowired
+    UserService userService;
 
     @Transactional
     public void saveExercise(ExerciseCreateRequest request) {
         Exercise.ExerciseBuilder builder = Exercise.builder()
                 .answer(request.getAnswer());
         Test test = testService.getTestById(request.getTestId());
+        List<GroupTestDTO> assignedGroupsToTest = testService.findGroupsByTestId(test.getId());
         if (request.getExerciseTypedRequest().getType() == ExerciseType.MULTIPLE_ANSWER_EXERCISE ||
                 request.getExerciseTypedRequest().getType() == ExerciseType.SINGLE_ANSWER_EXERCISE) {
             TestExercise testExercise = new TestExercise(request.getExerciseTypedRequest().getType(),
@@ -63,7 +63,13 @@ public class ExerciseService {
         }
         builder.test(test);
         Exercise ex = builder.build();
-        exerciseRepository.create(ex.getTest().getId(), ex.getQuestion(), ex.getAnswer());
+        ex = exerciseRepository.save(ex);
+        for (GroupTestDTO groupTestDTO : assignedGroupsToTest) {
+            List<User> users = userService.getAllStudentsInGroupByGroupId(groupTestDTO.getGroupId());
+            for (User user : users) {
+                userService.assignUserToExercises(user.getId(), ex.getId());
+            }
+        }
     }
 
     public ExerciseResponse getExerciseById(Long id) {

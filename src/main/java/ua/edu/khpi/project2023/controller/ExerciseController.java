@@ -59,7 +59,6 @@ public class ExerciseController {
     @PreAuthorize("hasRole('TEACHER')")
     ResponseEntity<List<PassExerciseResponse>> getExercisesByStudentAndTestId(@RequestParam(name = "testId") Long testId,
                                                                            @RequestParam(name = "userId") Long userId) {
-
         return ResponseEntity.ok(exerciseService.getExercisesByUserAndTestId(userId, testId));
     }
 

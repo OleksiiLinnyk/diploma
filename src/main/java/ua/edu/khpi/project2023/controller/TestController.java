@@ -74,7 +74,7 @@ public class TestController {
     @GetMapping("/userProgress")
     @PreAuthorize("hasRole('TEACHER')")
     ResponseEntity<List<UserProgressResponse>> getUserResultsByTestAndGroupId(@RequestParam(value = "groupId") Long groupId,
-                                                                      @RequestParam(value = "testId") Long testId) {
+                                                                              @RequestParam(value = "testId") Long testId) {
 
         return ResponseEntity.ok(testService.getUserProgressResponseByTestAndGroupId(testId, groupId));
     }

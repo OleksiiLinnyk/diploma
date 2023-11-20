@@ -1,5 +1,6 @@
 package ua.edu.khpi.project2023.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 import static ua.edu.khpi.project2023.exercise.util.ExerciseJsonUtil.jsonToExercise;
 
+@Slf4j
 @Service
 public class TestService {
 
@@ -96,6 +98,9 @@ public class TestService {
         return tests;
     }
 
+    public List<GroupTestDTO> findGroupsByTestId(Long testId) {
+        return testRepository.findGroupsByTestId(testId);
+    }
     public List<GroupsProgressResponse> getGroupsProgressByTestId(Long testId) {
         List<GroupsProgressResponse> groupsProgressResponseList = new ArrayList<>();
         List<GroupTestDTO> groupTestDTOS = testRepository.findGroupsByTestId(testId);

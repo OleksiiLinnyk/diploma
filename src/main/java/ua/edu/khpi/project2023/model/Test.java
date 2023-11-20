@@ -35,9 +35,6 @@ public class Test {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User teacher;
 
-    @OneToMany(mappedBy = "test")
-    private Set<Exercise> exercise;
-
     public Test() {
     }
 
