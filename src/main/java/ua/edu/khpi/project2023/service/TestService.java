@@ -12,6 +12,7 @@ import ua.edu.khpi.project2023.model.Test;
 import ua.edu.khpi.project2023.model.User;
 import ua.edu.khpi.project2023.model.request.TestUpsertRequest;
 import ua.edu.khpi.project2023.model.response.GroupsProgressResponse;
+import ua.edu.khpi.project2023.model.response.MyResultsResponse;
 import ua.edu.khpi.project2023.model.response.UserProgressResponse;
 import ua.edu.khpi.project2023.repository.ExerciseRepository;
 import ua.edu.khpi.project2023.repository.TestRepository;
@@ -154,6 +155,48 @@ public class TestService {
                     .build());
         }
         return usersProgress;
+    }
+
+    public List<MyResultsResponse> getMyTestsResults() {
+        List<MyResultsResponse> results = new ArrayList<>();
+        AuthUser authUser = (AuthUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<Test> tests =  testRepository.getMyStudentTests(authUser.getGroupId());
+        tests.forEach(test -> resolveTestResults(test, authUser.getId(), results));
+
+        return results;
+    }
+
+    private void resolveTestResults(Test test, Long userId, List<MyResultsResponse> listToFill) {
+        String status = "done";
+        int takenPointsCounter = 0;
+        int totalPointsCounter = 0;
+        List<PassedExerciseDTO> testExercises = exerciseRepository.findAllByStudentAndTestId(userId, test.getId());
+        for (PassedExerciseDTO dto : testExercises) {
+            Integer takenPoints = dto.getTakenPoints();
+            if (takenPoints != null) {
+                takenPointsCounter += takenPoints;
+            }
+            totalPointsCounter += jsonToExercise(dto.getQuestion()).getPoints();
+            if (status.equals("done") && (dto.getChecked() == null || !dto.getChecked())) {
+                status = "review";
+            }
+            if ((status.equals("done") || status.equals("review")) && dto.getGivenAnswer() == null) {
+                status = "todo";
+            }
+        }
+        if (status.equals("todo") || totalPointsCounter == 0) {
+            return;
+        }
+
+        MyResultsResponse result = MyResultsResponse.builder()
+                .status(status)
+                .testId(test.getId())
+                .theme(test.getTheme())
+                .subject(test.getSubject())
+                .takenPoints(takenPointsCounter)
+                .totalPoints(totalPointsCounter)
+                .build();
+        listToFill.add(result);
     }
 
     private List<Test> filterTestsByStatus(List<Test> tests, Long userId, String status) {

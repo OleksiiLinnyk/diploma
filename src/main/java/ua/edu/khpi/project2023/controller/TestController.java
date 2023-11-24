@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.edu.khpi.project2023.model.Test;
 import ua.edu.khpi.project2023.model.request.TestUpsertRequest;
 import ua.edu.khpi.project2023.model.response.GroupsProgressResponse;
+import ua.edu.khpi.project2023.model.response.MyResultsResponse;
 import ua.edu.khpi.project2023.model.response.UserProgressResponse;
 import ua.edu.khpi.project2023.service.TestService;
 
@@ -63,6 +64,12 @@ public class TestController {
     @PreAuthorize("hasRole('STUDENT')")
     ResponseEntity<List<Test>> getMyStudentTest(@RequestParam(value = "status", required = false) String status) {
         return ResponseEntity.ok(testService.getMyStudentTest(status));
+    }
+
+    @GetMapping("/my/result")
+    @PreAuthorize("hasRole('STUDENT')")
+    ResponseEntity<List<MyResultsResponse>> getMyStudentResults() {
+        return ResponseEntity.ok(testService.getMyTestsResults());
     }
 
     @GetMapping("/progress/{testId}")
